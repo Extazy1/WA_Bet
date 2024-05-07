@@ -28,7 +28,7 @@ public class UserController {
             @ApiParam(value = "密码", required = true) @RequestParam String password,
             @ApiParam(value = "电话号码", required = true) @RequestParam String phoneNumber,
             @ApiParam(value = "地址", required = true) @RequestParam String address,
-            HttpServletRequest request) {
+            @ApiParam(value = "HTTP 请求对象", required = false) HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
         String IP = IpUtil.getIpAddr(request);
@@ -62,7 +62,7 @@ public class UserController {
     public Map<String, Object> login(
             @ApiParam(value = "用户名", required = true) @RequestParam String userName,
             @ApiParam(value = "密码", required = true) @RequestParam String password,
-            HttpServletRequest request) {
+            @ApiParam(value = "HTTP 请求对象", required = false) HttpServletRequest request) {
         User user = userService.selectUserByUserName(userName, password);
         int flag = userService.selectUserByUserName1(userName, password);
         Map<String, Object> result = new HashMap<>();
@@ -91,6 +91,54 @@ public class UserController {
                 result.put("data", data);
                 break;
         }
+        return result;
+    }
+
+    @ApiOperation(value = "获取用户信息", notes = "通过Session获取当前登录用户信息")
+    @GetMapping("/info")
+    public Map<String, Object> getUserInfo(
+            @ApiParam(value = "HTTP 请求对象", required = false) HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        if (user != null) {
+            result.put("code", 0);
+            result.put("msg", "获取用户信息成功");
+            data.put("id", user.getId());
+            data.put("name", user.getUserName());
+            data.put("phone", user.getPhoneNumber());
+            data.put("address", user.getAddress());
+            data.put("ip", IpUtil.getIpAddr(request));
+            result.put("data", data);
+        } else {
+            result.put("code", 1);
+            result.put("msg", "用户未登录或会话已过期");
+            result.put("data", data);
+        }
+
+        return result;
+    }
+
+    @ApiOperation(value = "判断用户是否登录", notes = "通过Session判断用户是否登录")
+    @GetMapping("/isLoggedIn")
+    public Map<String, Object> isLoggedIn(
+            @ApiParam(value = "HTTP 请求对象", required = false) HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        if (user != null) {
+            result.put("code", 0);
+            result.put("msg", "用户已登录");
+            result.put("data", true);
+        } else {
+            result.put("code", 1);
+            result.put("msg", "用户未登录或会话已过期");
+            result.put("data", false);
+        }
+
         return result;
     }
 }
