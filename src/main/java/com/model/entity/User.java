@@ -14,4 +14,6 @@ public class User {
     private String userName;       //姓名
     private String address;        //地址
     private String IP;             //IP地址
+    private long point;             //票数
+    private long authority;         //权限
 }

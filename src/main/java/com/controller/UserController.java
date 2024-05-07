@@ -78,6 +78,8 @@ public class UserController {
                 data.put("phone", user.getPhoneNumber());
                 data.put("address", user.getAddress());
                 data.put("ip", IpUtil.getIpAddr(request));
+                data.put("authority", user.getAuthority());
+                data.put("point", user.getPoint());
                 result.put("data", data);
                 break;
             case 1:
@@ -111,6 +113,8 @@ public class UserController {
             data.put("phone", user.getPhoneNumber());
             data.put("address", user.getAddress());
             data.put("ip", IpUtil.getIpAddr(request));
+            data.put("authority", user.getAuthority());
+            data.put("point", user.getPoint());
             result.put("data", data);
         } else {
             result.put("code", 3);
