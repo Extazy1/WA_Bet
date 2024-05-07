@@ -36,17 +36,17 @@ public class UserController {
         switch (flag) {
             case 0:
                 result.put("msg", "用户名或手机号已存在");
-                result.put("code", 0);
+                result.put("code", 1);
                 result.put("data", data);
                 break;
             case 1:
                 result.put("msg", "IP限制注册");
-                result.put("code", 0);
+                result.put("code", 1);
                 result.put("data", data);
                 break;
             case 2:
                 result.put("msg", "注册成功");
-                result.put("code", 1);
+                result.put("code", 0);
                 data.put("userName", userName);
                 data.put("phoneNumber", phoneNumber);
                 data.put("address", address);
@@ -81,12 +81,12 @@ public class UserController {
                 result.put("data", data);
                 break;
             case 1:
-                result.put("code", 0);
+                result.put("code", 1);
                 result.put("msg", "用户未注册");
                 result.put("data", data);
                 break;
             default:
-                result.put("code", 0);
+                result.put("code", 1);
                 result.put("msg", "密码错误");
                 result.put("data", data);
                 break;
@@ -113,7 +113,7 @@ public class UserController {
             data.put("ip", IpUtil.getIpAddr(request));
             result.put("data", data);
         } else {
-            result.put("code", 1);
+            result.put("code", 3);
             result.put("msg", "用户未登录或会话已过期");
             result.put("data", data);
         }
@@ -134,7 +134,7 @@ public class UserController {
             result.put("msg", "用户已登录");
             result.put("data", true);
         } else {
-            result.put("code", 1);
+            result.put("code", 3);
             result.put("msg", "用户未登录或会话已过期");
             result.put("data", false);
         }
