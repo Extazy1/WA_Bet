@@ -1,0 +1,32 @@
+server:
+  port: 8101
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/guess
+    username: root
+    password: 123456
+
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+# 接口文档配置
+knife4j:
+  enable: true
+  openapi:
+    title: "接口文档"
+    version: 1.0
+    group:
+      default:
+        api-rule: package
+        api-rule-resources:
+          - com.controller
+springfox:
+  documentation:
+    swagger:
+      v2:
+        host: localhost:8101
+        path: /api-docs
