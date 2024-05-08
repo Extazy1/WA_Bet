@@ -173,4 +173,23 @@ public class UserController {
 
         return result;
     }
+
+    @ApiOperation(value = "封禁用户", notes = "管理员封禁用户")
+    @RequiresAuthority(value = 1) // 需要管理员权限
+    @PostMapping("/ban")
+    public Map<String, Object> banUser(
+            @ApiParam(value = "用户ID", required = true) @RequestParam Integer userId) {
+        Map<String, Object> result = new HashMap<>();
+        boolean success = userService.banUserById(userId);
+
+        if (success) {
+            result.put("code", 0);
+            result.put("msg", "用户已被封禁");
+        } else {
+            result.put("code", 1);
+            result.put("msg", "未找到用户或封禁失败");
+        }
+
+        return result;
+    }
 }

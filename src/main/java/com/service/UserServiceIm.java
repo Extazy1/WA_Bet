@@ -64,4 +64,15 @@ public class UserServiceIm implements UserService {
     public List<User> getAllUsers() {
         return userDao.selectAllUsers();
     }
+
+    @Override
+    public boolean banUserById(Integer userId) {
+        User user = userDao.selectUserById(userId);
+        if (user != null) {
+            user.setAuthority(2); // 将用户权限设置为 2 表示封禁
+            userDao.updateUser(user);
+            return true;
+        }
+        return false;
+    }
 }

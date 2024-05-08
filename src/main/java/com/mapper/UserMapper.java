@@ -1,7 +1,9 @@
 package com.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 import com.model.entity.User;
 
@@ -21,4 +23,11 @@ public interface UserMapper {
 
     @Select("SELECT * FROM user")
     List<User> selectAllUsers();
+
+    @Select("SELECT * FROM user WHERE id = #{userId}")
+    User selectUserById(@Param("userId") Integer userId);
+
+    @Update("UPDATE user SET username = #{user.userName}, phoneNumber = #{user.phoneNumber}, address = #{user.address}, authority = #{user.authority}, point = #{user.point} WHERE id = #{user.id}")
+    void updateUser(@Param("user") User user);
+
 }
