@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.annotation.RequiresAuthority;
 import com.model.dto.VoteEventDTO;
 import com.model.entity.VoteEvent;
 import com.service.VoteEventService;
@@ -24,7 +25,8 @@ public class VoteEventController {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    @ApiOperation(value = "添加投票活动", notes = "新增投票活动信息")
+    @ApiOperation(value = "添加投票活动", notes = "新增投票活动信息 需要权限")
+    @RequiresAuthority(value = 1) // 需要管理员权限
     @PostMapping("/add")
     public Map<String, Object> addVoteEvent(
             @ApiParam(value = "投票活动名称", required = true) @RequestParam String name,
@@ -86,7 +88,8 @@ public class VoteEventController {
         return result;
     }
 
-    @ApiOperation(value = "更新投票活动信息", notes = "更新投票活动信息")
+    @ApiOperation(value = "更新投票活动信息", notes = "更新投票活动信息 需要权限")
+    @RequiresAuthority(value = 1) // 需要管理员权限
     @PutMapping("/update/{id}")
     public Map<String, Object> updateVoteEvent(
             @ApiParam(value = "投票活动ID", required = true) @PathVariable Integer id,
@@ -127,7 +130,8 @@ public class VoteEventController {
         return result;
     }
 
-    @ApiOperation(value = "删除投票活动信息", notes = "通过ID删除特定投票活动信息")
+    @ApiOperation(value = "删除投票活动信息", notes = "通过ID删除特定投票活动信息 需要权限")
+    @RequiresAuthority(value = 1) // 需要管理员权限
     @DeleteMapping("/delete/{id}")
     public Map<String, Object> deleteVoteEvent(
             @ApiParam(value = "投票活动ID", required = true) @PathVariable Integer id) {
