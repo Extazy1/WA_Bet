@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.annotation.RequiresAuthority;
 import com.model.dto.AthleteDTO;
 import com.model.entity.Athlete;
 import com.service.AthleteService;
@@ -23,6 +24,7 @@ public class AthleteController {
     private AthleteService athleteService;
 
     @ApiOperation(value = "添加运动员", notes = "新增运动员信息")
+    @RequiresAuthority(value = 1) // 需要管理员权限
     @PostMapping("/add")
     public Map<String, Object> addAthlete(
             @ApiParam(value = "运动员姓名", required = true) @RequestParam String name,
@@ -74,6 +76,7 @@ public class AthleteController {
     }
 
     @ApiOperation(value = "更新运动员信息", notes = "更新运动员信息")
+    @RequiresAuthority(value = 1) // 需要管理员权限
     @PutMapping("/update/{id}")
     public Map<String, Object> updateAthlete(
             @ApiParam(value = "运动员ID", required = true) @PathVariable Integer id,
@@ -105,6 +108,7 @@ public class AthleteController {
     }
 
     @ApiOperation(value = "删除运动员信息", notes = "通过ID删除特定运动员信息")
+    @RequiresAuthority(value = 1) // 需要管理员权限
     @DeleteMapping("/delete/{id}")
     public Map<String, Object> deleteAthlete(
             @ApiParam(value = "运动员ID", required = true) @PathVariable Integer id) {
