@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.annotation.RequiresAuthority;
 import com.model.dto.RankingDTO;
 import com.model.dto.VoteDTO;
 import com.model.entity.Athlete;
@@ -50,7 +51,8 @@ public class VoteController {
         return result;
     }
 
-    @ApiOperation(value = "获取所有投票记录", notes = "获取所有投票记录信息")
+    @ApiOperation(value = "获取所有投票记录", notes = "获取所有投票记录信息 需要权限")
+    @RequiresAuthority(value = 1) // 需要管理员权限
     @GetMapping("/all")
     public Map<String, Object> getAllVotes() {
         List<Vote> votes = voteService.list();
@@ -79,7 +81,8 @@ public class VoteController {
         return result;
     }
 
-    @ApiOperation(value = "更新投票记录信息", notes = "更新投票记录信息")
+    @ApiOperation(value = "更新投票记录信息", notes = "更新投票记录信息 需要权限")
+    @RequiresAuthority(value = 1) // 需要管理员权限
     @PutMapping("/update/{id}")
     public Map<String, Object> updateVote(
             @ApiParam(value = "投票记录ID", required = true) @PathVariable Integer id,
@@ -112,7 +115,8 @@ public class VoteController {
         return result;
     }
 
-    @ApiOperation(value = "删除投票记录信息", notes = "通过ID删除特定投票记录信息")
+    @ApiOperation(value = "删除投票记录信息", notes = "通过ID删除特定投票记录信息 需要权限")
+    @RequiresAuthority(value = 1) // 需要管理员权限
     @DeleteMapping("/delete/{id}")
     public Map<String, Object> deleteVote(
             @ApiParam(value = "投票记录ID", required = true) @PathVariable Integer id) {

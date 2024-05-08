@@ -23,7 +23,7 @@ public class AthleteController {
     @Autowired
     private AthleteService athleteService;
 
-    @ApiOperation(value = "添加运动员", notes = "新增运动员信息")
+    @ApiOperation(value = "添加运动员", notes = "新增运动员信息 需要权限")
     @RequiresAuthority(value = 1) // 需要管理员权限
     @PostMapping("/add")
     public Map<String, Object> addAthlete(
@@ -75,7 +75,7 @@ public class AthleteController {
         return result;
     }
 
-    @ApiOperation(value = "更新运动员信息", notes = "更新运动员信息")
+    @ApiOperation(value = "更新运动员信息", notes = "更新运动员信息 需要权限")
     @RequiresAuthority(value = 1) // 需要管理员权限
     @PutMapping("/update/{id}")
     public Map<String, Object> updateAthlete(
@@ -107,7 +107,7 @@ public class AthleteController {
         return result;
     }
 
-    @ApiOperation(value = "删除运动员信息", notes = "通过ID删除特定运动员信息")
+    @ApiOperation(value = "删除运动员信息", notes = "通过ID删除特定运动员信息 需要权限")
     @RequiresAuthority(value = 1) // 需要管理员权限
     @DeleteMapping("/delete/{id}")
     public Map<String, Object> deleteAthlete(
