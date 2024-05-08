@@ -1,20 +1,14 @@
 package com.mapper;
 
 import com.model.entity.Vote;
+import com.model.entity.Athlete;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
-/**
-* @author Admin
-* @description 针对表【vote】的数据库操作Mapper
-* @createDate 2024-05-08 07:41:22
-* @Entity com.model.entity.Vote
-*/
+import java.util.List;
+
 @Mapper
 public interface VoteMapper extends BaseMapper<Vote> {
-
+    List<Integer> selectVotedAthleteIdsByUserAndEvent(Integer userId, Integer voteEventId);
+    List<Athlete> selectUnvotedAthletesByUserAndEvent(Integer userId, Integer voteEventId);
 }
-
-
-
-

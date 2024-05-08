@@ -215,4 +215,29 @@ public class VoteController {
         result.put("data", rankings);
         return result;
     }
+
+    @ApiOperation(value = "获取某个活动中用户未投票的运动员信息", notes = "获取某个投票活动中用户尚未投票的运动员信息")
+    @GetMapping("/unvoted-athletes")
+    public Map<String, Object> getUnvotedAthletesByEvent(
+            @ApiParam(value = "用户ID", required = true) @RequestParam Integer userId,
+            @ApiParam(value = "投票活动ID", required = true) @RequestParam Integer voteEventId) {
+        List<Athlete> unvotedAthletes = voteService.getUnvotedAthletesByUserAndEvent(userId, voteEventId);
+
+        List<Map<String, Object>> unvotedAthleteInfoList = unvotedAthletes.stream()
+                .map(athlete -> {
+                    Map<String, Object> athleteInfo = new HashMap<>();
+                    athleteInfo.put("id", athlete.getId());
+                    athleteInfo.put("name", athlete.getName());
+                    athleteInfo.put("sport", athlete.getSport());
+                    athleteInfo.put("link", athlete.getLink());
+                    return athleteInfo;
+                })
+                .collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("code", 0);
+        result.put("msg", "查询成功");
+        result.put("data", unvotedAthleteInfoList);
+        return result;
+    }
 }

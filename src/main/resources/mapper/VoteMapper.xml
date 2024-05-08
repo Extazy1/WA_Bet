@@ -47,4 +47,23 @@
         DELETE FROM vote
         WHERE id = #{id}
     </delete>
+
+    <!-- 获取用户在特定投票活动中已投票的运动员 ID 列表 -->
+    <select id="selectVotedAthleteIdsByUserAndEvent" parameterType="map" resultType="int">
+        SELECT athlete_id
+        FROM vote
+        WHERE user_id = #{userId} AND vote_event_id = #{voteEventId}
+    </select>
+
+    <!-- 获取用户在特定投票活动中尚未投票的运动员信息 -->
+    <select id="selectUnvotedAthletesByUserAndEvent" parameterType="map" resultType="com.model.entity.Athlete">
+        SELECT a.*
+        FROM athlete a
+        WHERE a.id NOT IN (
+            SELECT athlete_id
+            FROM vote
+            WHERE user_id = #{userId} AND vote_event_id = #{voteEventId}
+        )
+    </select>
+
 </mapper>
