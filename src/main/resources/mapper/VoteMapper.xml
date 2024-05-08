@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.VoteMapper">
+
+    <resultMap id="BaseResultMap" type="com.model.entity.Vote">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="athleteId" column="athlete_id" jdbcType="INTEGER"/>
+        <result property="voteEventId" column="vote_event_id" jdbcType="INTEGER"/>
+        <result property="votes" column="votes" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, athlete_id, vote_event_id, votes
+    </sql>
+
+    <select id="selectAllVotes" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM vote
+    </select>
+
+    <select id="selectVoteById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM vote
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertVote" parameterType="com.model.entity.Vote">
+        INSERT INTO vote (user_id, athlete_id, vote_event_id, votes)
+        VALUES (#{userId}, #{athleteId}, #{voteEventId}, #{votes})
+    </insert>
+
+    <update id="updateVote" parameterType="com.model.entity.Vote">
+        UPDATE vote
+        SET user_id = #{userId},
+            athlete_id = #{athleteId},
+            vote_event_id = #{voteEventId},
+            votes = #{votes}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteVoteById" parameterType="int">
+        DELETE FROM vote
+        WHERE id = #{id}
+    </delete>
+</mapper>
