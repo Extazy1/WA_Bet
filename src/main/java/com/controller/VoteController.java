@@ -168,4 +168,47 @@ public class VoteController {
         result.put("data", rankings);
         return result;
     }
+
+    @ApiOperation(value = "根据投票活动ID统计运动员得票数并排名", notes = "根据特定投票活动ID统计运动员得票数并进行排名")
+    @GetMapping("/rankings/event/{voteEventId}")
+    public Map<String, Object> getAthleteRankingsByEvent(
+            @ApiParam(value = "投票活动ID", required = true) @PathVariable Integer voteEventId) {
+        List<Vote> votes = voteService.list();
+        Map<Integer, Integer> athleteVotesMap = new HashMap<>();
+
+        // 统计每个运动员在特定投票活动中的得票数
+        for (Vote vote : votes) {
+            if (vote.getVoteEventId().equals(voteEventId)) {
+                athleteVotesMap.merge(vote.getAthleteId(), vote.getVotes(), Integer::sum);
+            }
+        }
+
+        // 获取所有运动员信息并构建 Map
+        List<Athlete> athletes = athleteService.list();
+        Map<Integer, Athlete> athleteMap = athletes.stream()
+                .collect(Collectors.toMap(Athlete::getId, athlete -> athlete));
+
+        // 对运动员得票数进行降序排序
+        List<Map.Entry<Integer, Integer>> sortedAthleteVotes = athleteVotesMap.entrySet()
+                .stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .collect(Collectors.toList());
+
+        // 构造返回结果
+        List<RankingDTO> rankings = new ArrayList<>();
+        for (int i = 0; i < sortedAthleteVotes.size(); i++) {
+            Map.Entry<Integer, Integer> entry = sortedAthleteVotes.get(i);
+            Athlete athlete = athleteMap.get(entry.getKey());
+            if (athlete != null) {
+                RankingDTO rankingDTO = new RankingDTO(i + 1, entry.getValue(), athlete.getId(), athlete.getName(), athlete.getSport(), athlete.getLink());
+                rankings.add(rankingDTO);
+            }
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("code", 0);
+        result.put("msg", "查询成功");
+        result.put("data", rankings);
+        return result;
+    }
 }
