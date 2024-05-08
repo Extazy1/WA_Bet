@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.VoteEventMapper">
+
+    <resultMap id="BaseResultMap" type="com.model.entity.VoteEvent">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="maxVotesPerUser" column="max_votes_per_user" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, name, start_time, end_time, max_votes_per_user
+    </sql>
+
+    <select id="selectAllVoteEvents" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM vote_event
+    </select>
+
+    <select id="selectVoteEventById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM vote_event
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertVoteEvent" parameterType="com.model.entity.VoteEvent">
+        INSERT INTO vote_event (name, start_time, end_time, max_votes_per_user)
+        VALUES (#{name}, #{startTime}, #{endTime}, #{maxVotesPerUser})
+    </insert>
+
+    <update id="updateVoteEvent" parameterType="com.model.entity.VoteEvent">
+        UPDATE vote_event
+        SET name = #{name},
+            start_time = #{startTime},
+            end_time = #{endTime},
+            max_votes_per_user = #{maxVotesPerUser}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteVoteEventById" parameterType="int">
+        DELETE FROM vote_event
+        WHERE id = #{id}
+    </delete>
+</mapper>
