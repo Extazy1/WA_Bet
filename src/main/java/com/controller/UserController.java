@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.annotation.RequiresAuthority;
 import com.model.entity.User;
 import com.service.UserService;
 import com.util.IpUtil;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "用户控制器")
 @RestController
@@ -122,6 +125,31 @@ public class UserController {
             result.put("data", data);
         }
 
+        return result;
+    }
+
+    @ApiOperation(value = "获取所有用户信息", notes = "获取所有用户信息 需要权限")
+    @RequiresAuthority(value = 1) // 需要管理员权限
+    @GetMapping("/all")
+    public Map<String, Object> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        List<Map<String, Object>> userDTOs = users.stream()
+                .map(user -> {
+                    Map<String, Object> userDTO = new HashMap<>();
+                    userDTO.put("id", user.getId());
+                    userDTO.put("name", user.getUserName());
+                    userDTO.put("phone", user.getPhoneNumber());
+                    userDTO.put("address", user.getAddress());
+                    userDTO.put("authority", user.getAuthority());
+                    userDTO.put("point", user.getPoint());
+                    return userDTO;
+                })
+                .collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("code", 0);
+        result.put("msg", "查询成功");
+        result.put("data", userDTOs);
         return result;
     }
 

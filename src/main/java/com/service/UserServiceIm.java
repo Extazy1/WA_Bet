@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.model.entity.User;
 
+import java.util.List;
+
 @Service
 public class UserServiceIm implements UserService {
     @Autowired
@@ -57,5 +59,9 @@ public class UserServiceIm implements UserService {
 
     }
 
-
+    // 获取所有用户信息
+    @Override
+    public List<User> getAllUsers() {
+        return userDao.selectAllUsers();
+    }
 }

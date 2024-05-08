@@ -1,8 +1,11 @@
 package com.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 import com.model.entity.User;
+
+import java.util.List;
 
 @Mapper
 @Repository
@@ -15,4 +18,7 @@ public interface UserMapper {
     public User selectUserByUserName(String userName);
     //根据IP查找用户
     public User selectUserByIP(String IP);
+
+    @Select("SELECT * FROM user")
+    List<User> selectAllUsers();
 }
