@@ -12,5 +12,6 @@ import java.util.List;
 public interface VoteService extends IService<Vote> {
     List<Integer> getVotedAthleteIdsByUserAndEvent(Integer userId, Integer voteEventId);
     List<Athlete> getUnvotedAthletesByUserAndEvent(Integer userId, Integer voteEventId);
+    void addOrUpdateVote(Integer userId, Integer athleteId, Integer voteEventId, Integer votes);
 }
 

@@ -66,4 +66,18 @@
         )
     </select>
 
+    <!-- 查询指定用户和活动的投票记录 -->
+    <select id="selectVoteByUserAndEvent" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM vote
+        WHERE user_id = #{userId} AND athlete_id = #{athleteId} AND vote_event_id = #{voteEventId}
+    </select>
+
+    <!-- 更新指定用户和活动的投票记录 -->
+    <update id="incrementVote" parameterType="map">
+        UPDATE vote
+        SET votes = votes + #{votes}
+        WHERE user_id = #{userId} AND athlete_id = #{athleteId} AND vote_event_id = #{voteEventId}
+    </update>
 </mapper>

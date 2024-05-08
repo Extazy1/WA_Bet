@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,27 +28,26 @@ public class VoteController {
     @Autowired
     private AthleteService athleteService;
 
-    @ApiOperation(value = "添加投票记录", notes = "新增投票记录信息")
+    @ApiOperation(value = "添加或更新投票记录", notes = "新增或更新投票记录信息")
     @PostMapping("/add")
     public Map<String, Object> addVote(
             @ApiParam(value = "用户ID", required = true) @RequestParam Integer userId,
             @ApiParam(value = "运动员ID", required = true) @RequestParam Integer athleteId,
             @ApiParam(value = "投票活动ID", required = true) @RequestParam Integer voteEventId,
             @ApiParam(value = "投票数量", required = true) @RequestParam Integer votes) {
-        Vote vote = new Vote();
-        vote.setUserId(userId);
-        vote.setAthleteId(athleteId);
-        vote.setVoteEventId(voteEventId);
-        vote.setVotes(votes);
+        voteService.addOrUpdateVote(userId, athleteId, voteEventId, votes);
 
-        boolean success = voteService.save(vote);
+        Vote vote = voteService.getOne(new QueryWrapper<Vote>()
+                .eq("user_id", userId)
+                .eq("athlete_id", athleteId)
+                .eq("vote_event_id", voteEventId));
 
         VoteDTO voteDTO = new VoteDTO(vote.getId(), vote.getUserId(), vote.getAthleteId(), vote.getVoteEventId(), vote.getVotes());
 
         Map<String, Object> result = new HashMap<>();
-        result.put("code", success ? 0 : 1);
-        result.put("msg", success ? "添加成功" : "添加失败");
-        result.put("data", success ? voteDTO : new HashMap<>());
+        result.put("code", 0);
+        result.put("msg", "添加或更新成功");
+        result.put("data", voteDTO);
         return result;
     }
 

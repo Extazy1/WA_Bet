@@ -33,6 +33,21 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
     public List<Athlete> getUnvotedAthletesByUserAndEvent(Integer userId, Integer voteEventId) {
         return voteMapper.selectUnvotedAthletesByUserAndEvent(userId, voteEventId);
     }
+
+    @Override
+    public void addOrUpdateVote(Integer userId, Integer athleteId, Integer voteEventId, Integer votes) {
+        Vote existingVote = voteMapper.selectVoteByUserAndEvent(userId, athleteId, voteEventId);
+        if (existingVote != null) {
+            voteMapper.incrementVote(userId, athleteId, voteEventId, votes);
+        } else {
+            Vote newVote = new Vote();
+            newVote.setUserId(userId);
+            newVote.setAthleteId(athleteId);
+            newVote.setVoteEventId(voteEventId);
+            newVote.setVotes(votes);
+            voteMapper.insert(newVote);
+        }
+    }
 }
 
 
