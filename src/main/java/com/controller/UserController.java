@@ -38,12 +38,12 @@ public class UserController {
         int flag = userService.insertUser(phoneNumber, password, userName, address, IP);
         switch (flag) {
             case 0:
-                result.put("msg", "用户名或手机号已存在");
+                result.put("msg", "用户名已存在");
                 result.put("code", 1);
                 result.put("data", data);
                 break;
             case 1:
-                result.put("msg", "IP限制注册");
+                result.put("msg", "手机号已存在");
                 result.put("code", 1);
                 result.put("data", data);
                 break;

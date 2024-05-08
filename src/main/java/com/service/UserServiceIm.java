@@ -16,13 +16,13 @@ public class UserServiceIm implements UserService {
     public int insertUser(String phoneNumber,String password,String userName,String address,String IP) {
         User user1=userDao.selectUserByUserName(userName);
         User user2=userDao.selectUserByPhoneNumber(phoneNumber);
-        User user3=userDao.selectUserByIP(IP);
-        if (user1!=null||user2!=null) {
-            //用户名或者手机号码已存在
+        //User user3=userDao.selectUserByIP(IP);
+        if (user1!=null) {
+            //用户名已存在
             return 0;
         }
-        if (user3!=null) {
-            //IP已存在
+        if (user2!=null) {
+            //手机号码已存在
             return 1;
         }
         //可以正确注册
