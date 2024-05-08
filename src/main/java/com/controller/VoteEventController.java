@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.model.dto.VoteEventDTO;
 import com.model.entity.VoteEvent;
 import com.service.VoteEventService;
 import io.swagger.annotations.Api;
@@ -10,10 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Api(tags = "投票活动控制器")
 @RestController
@@ -45,9 +44,11 @@ public class VoteEventController {
 
             boolean success = voteEventService.save(voteEvent);
 
+            VoteEventDTO voteEventDTO = new VoteEventDTO(voteEvent.getId(), voteEvent.getName(), voteEvent.getStartTime(), voteEvent.getEndTime(), voteEvent.getMaxVotesPerUser());
+
             result.put("code", success ? 0 : 1);
             result.put("msg", success ? "添加成功" : "添加失败");
-            result.put("data", success ? voteEvent : new HashMap<>());
+            result.put("data", success ? voteEventDTO : new HashMap<>());
         } catch (ParseException e) {
             result.put("code", 1);
             result.put("msg", "日期格式错误");
@@ -60,10 +61,14 @@ public class VoteEventController {
     @GetMapping("/all")
     public Map<String, Object> getAllVoteEvents() {
         List<VoteEvent> voteEvents = voteEventService.list();
+        List<VoteEventDTO> voteEventDTOs = voteEvents.stream()
+                .map(voteEvent -> new VoteEventDTO(voteEvent.getId(), voteEvent.getName(), voteEvent.getStartTime(), voteEvent.getEndTime(), voteEvent.getMaxVotesPerUser()))
+                .collect(Collectors.toList());
+
         Map<String, Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "查询成功");
-        result.put("data", voteEvents);
+        result.put("data", voteEventDTOs);
         return result;
     }
 
@@ -72,10 +77,12 @@ public class VoteEventController {
     public Map<String, Object> getVoteEventById(
             @ApiParam(value = "投票活动ID", required = true) @PathVariable Integer id) {
         VoteEvent voteEvent = voteEventService.getById(id);
+        VoteEventDTO voteEventDTO = voteEvent != null ? new VoteEventDTO(voteEvent.getId(), voteEvent.getName(), voteEvent.getStartTime(), voteEvent.getEndTime(), voteEvent.getMaxVotesPerUser()) : null;
+
         Map<String, Object> result = new HashMap<>();
         result.put("code", voteEvent != null ? 0 : 1);
         result.put("msg", voteEvent != null ? "查询成功" : "投票活动不存在");
-        result.put("data", voteEvent != null ? voteEvent : new HashMap<>());
+        result.put("data", voteEventDTO != null ? voteEventDTO : new HashMap<>());
         return result;
     }
 
@@ -107,9 +114,11 @@ public class VoteEventController {
 
             boolean success = voteEventService.updateById(voteEvent);
 
+            VoteEventDTO voteEventDTO = new VoteEventDTO(voteEvent.getId(), voteEvent.getName(), voteEvent.getStartTime(), voteEvent.getEndTime(), voteEvent.getMaxVotesPerUser());
+
             result.put("code", success ? 0 : 1);
             result.put("msg", success ? "更新成功" : "更新失败");
-            result.put("data", success ? voteEvent : new HashMap<>());
+            result.put("data", success ? voteEventDTO : new HashMap<>());
         } catch (ParseException e) {
             result.put("code", 1);
             result.put("msg", "日期格式错误");

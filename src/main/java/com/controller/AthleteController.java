@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.model.dto.AthleteDTO;
 import com.model.entity.Athlete;
 import com.service.AthleteService;
 import io.swagger.annotations.Api;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "运动员控制器")
 @RestController
@@ -33,10 +35,12 @@ public class AthleteController {
 
         boolean success = athleteService.save(athlete);
 
+        AthleteDTO athleteDTO = new AthleteDTO(athlete.getId(), athlete.getName(), athlete.getSport(), athlete.getLink());
+
         Map<String, Object> result = new HashMap<>();
         result.put("code", success ? 0 : 1);
         result.put("msg", success ? "添加成功" : "添加失败");
-        result.put("data", success ? athlete : new HashMap<>());
+        result.put("data", success ? athleteDTO : new HashMap<>());
         return result;
     }
 
@@ -44,10 +48,14 @@ public class AthleteController {
     @GetMapping("/all")
     public Map<String, Object> getAllAthletes() {
         List<Athlete> athletes = athleteService.list();
+        List<AthleteDTO> athleteDTOs = athletes.stream()
+                .map(athlete -> new AthleteDTO(athlete.getId(), athlete.getName(), athlete.getSport(), athlete.getLink()))
+                .collect(Collectors.toList());
+
         Map<String, Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "查询成功");
-        result.put("data", athletes);
+        result.put("data", athleteDTOs);
         return result;
     }
 
@@ -56,10 +64,12 @@ public class AthleteController {
     public Map<String, Object> getAthleteById(
             @ApiParam(value = "运动员ID", required = true) @PathVariable Integer id) {
         Athlete athlete = athleteService.getById(id);
+        AthleteDTO athleteDTO = athlete != null ? new AthleteDTO(athlete.getId(), athlete.getName(), athlete.getSport(), athlete.getLink()) : null;
+
         Map<String, Object> result = new HashMap<>();
         result.put("code", athlete != null ? 0 : 1);
         result.put("msg", athlete != null ? "查询成功" : "运动员不存在");
-        result.put("data", athlete != null ? athlete : new HashMap<>());
+        result.put("data", athleteDTO != null ? athleteDTO : new HashMap<>());
         return result;
     }
 
@@ -86,9 +96,11 @@ public class AthleteController {
 
         boolean success = athleteService.updateById(athlete);
 
+        AthleteDTO athleteDTO = new AthleteDTO(athlete.getId(), athlete.getName(), athlete.getSport(), athlete.getLink());
+
         result.put("code", success ? 0 : 1);
         result.put("msg", success ? "更新成功" : "更新失败");
-        result.put("data", success ? athlete : new HashMap<>());
+        result.put("data", success ? athleteDTO : new HashMap<>());
         return result;
     }
 

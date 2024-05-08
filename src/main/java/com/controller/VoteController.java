@@ -1,6 +1,10 @@
 package com.controller;
 
+import com.model.dto.RankingDTO;
+import com.model.dto.VoteDTO;
+import com.model.entity.Athlete;
 import com.model.entity.Vote;
+import com.service.AthleteService;
 import com.service.VoteService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -8,10 +12,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Api(tags = "投票控制器")
@@ -21,6 +22,9 @@ public class VoteController {
 
     @Autowired
     private VoteService voteService;
+
+    @Autowired
+    private AthleteService athleteService;
 
     @ApiOperation(value = "添加投票记录", notes = "新增投票记录信息")
     @PostMapping("/add")
@@ -37,10 +41,12 @@ public class VoteController {
 
         boolean success = voteService.save(vote);
 
+        VoteDTO voteDTO = new VoteDTO(vote.getId(), vote.getUserId(), vote.getAthleteId(), vote.getVoteEventId(), vote.getVotes());
+
         Map<String, Object> result = new HashMap<>();
         result.put("code", success ? 0 : 1);
         result.put("msg", success ? "添加成功" : "添加失败");
-        result.put("data", success ? vote : new HashMap<>());
+        result.put("data", success ? voteDTO : new HashMap<>());
         return result;
     }
 
@@ -48,10 +54,14 @@ public class VoteController {
     @GetMapping("/all")
     public Map<String, Object> getAllVotes() {
         List<Vote> votes = voteService.list();
+        List<VoteDTO> voteDTOs = votes.stream()
+                .map(vote -> new VoteDTO(vote.getId(), vote.getUserId(), vote.getAthleteId(), vote.getVoteEventId(), vote.getVotes()))
+                .collect(Collectors.toList());
+
         Map<String, Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "查询成功");
-        result.put("data", votes);
+        result.put("data", voteDTOs);
         return result;
     }
 
@@ -60,10 +70,12 @@ public class VoteController {
     public Map<String, Object> getVoteById(
             @ApiParam(value = "投票记录ID", required = true) @PathVariable Integer id) {
         Vote vote = voteService.getById(id);
+        VoteDTO voteDTO = vote != null ? new VoteDTO(vote.getId(), vote.getUserId(), vote.getAthleteId(), vote.getVoteEventId(), vote.getVotes()) : null;
+
         Map<String, Object> result = new HashMap<>();
         result.put("code", vote != null ? 0 : 1);
         result.put("msg", vote != null ? "查询成功" : "投票记录不存在");
-        result.put("data", vote != null ? vote : new HashMap<>());
+        result.put("data", voteDTO != null ? voteDTO : new HashMap<>());
         return result;
     }
 
@@ -74,7 +86,7 @@ public class VoteController {
             @ApiParam(value = "用户ID", required = true) @RequestParam Integer userId,
             @ApiParam(value = "运动员ID", required = true) @RequestParam Integer athleteId,
             @ApiParam(value = "投票活动ID", required = true) @RequestParam Integer voteEventId,
-            @ApiParam(value="投票数量", required = true) @RequestParam Integer votes) {
+            @ApiParam(value = "投票数量", required = true) @RequestParam Integer votes) {
         Vote vote = voteService.getById(id);
 
         Map<String, Object> result = new HashMap<>();
@@ -92,9 +104,11 @@ public class VoteController {
 
         boolean success = voteService.updateById(vote);
 
+        VoteDTO voteDTO = new VoteDTO(vote.getId(), vote.getUserId(), vote.getAthleteId(), vote.getVoteEventId(), vote.getVotes());
+
         result.put("code", success ? 0 : 1);
         result.put("msg", success ? "更新成功" : "更新失败");
-        result.put("data", success ? vote : new HashMap<>());
+        result.put("data", success ? voteDTO : new HashMap<>());
         return result;
     }
 
@@ -122,6 +136,11 @@ public class VoteController {
             athleteVotesMap.merge(vote.getAthleteId(), vote.getVotes(), Integer::sum);
         }
 
+        // 获取所有运动员信息并构建 Map
+        List<Athlete> athletes = athleteService.list();
+        Map<Integer, Athlete> athleteMap = athletes.stream()
+                .collect(Collectors.toMap(Athlete::getId, athlete -> athlete));
+
         // 对运动员得票数进行降序排序
         List<Map.Entry<Integer, Integer>> sortedAthleteVotes = athleteVotesMap.entrySet()
                 .stream()
@@ -129,14 +148,14 @@ public class VoteController {
                 .collect(Collectors.toList());
 
         // 构造返回结果
-        List<Map<String, Object>> rankings = new ArrayList<>();
+        List<RankingDTO> rankings = new ArrayList<>();
         for (int i = 0; i < sortedAthleteVotes.size(); i++) {
             Map.Entry<Integer, Integer> entry = sortedAthleteVotes.get(i);
-            Map<String, Object> athleteRanking = new HashMap<>();
-            athleteRanking.put("rank", i + 1);
-            athleteRanking.put("athleteId", entry.getKey());
-            athleteRanking.put("votes", entry.getValue());
-            rankings.add(athleteRanking);
+            Athlete athlete = athleteMap.get(entry.getKey());
+            if (athlete != null) {
+                RankingDTO rankingDTO = new RankingDTO(i + 1, entry.getValue(), athlete.getId(), athlete.getName(), athlete.getSport(), athlete.getLink());
+                rankings.add(rankingDTO);
+            }
         }
 
         Map<String, Object> result = new HashMap<>();
