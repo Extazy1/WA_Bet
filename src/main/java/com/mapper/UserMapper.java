@@ -1,4 +1,4 @@
-package com.dao;
+package com.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -6,7 +6,7 @@ import com.model.entity.User;
 
 @Mapper
 @Repository
-public interface UserDao {
+public interface UserMapper {
     //添加新用户
     public void insertUser(String phoneNumber,String password,String userName,String address,String IP);
     //根据手机号查找用户

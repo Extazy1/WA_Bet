@@ -1,4 +1,4 @@
-package com.dao;
+package com.mapper;
 
 import com.model.entity.Guessing;
 import org.apache.ibatis.annotations.Mapper;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 @Repository
-public interface GuessingDao {
+public interface GuessingMapper {
     public List<Guessing> selectGuessInfo();
     public List<Integer> selectMatchId(Integer id);
     //添加新选择

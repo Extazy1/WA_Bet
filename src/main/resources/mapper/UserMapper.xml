@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.dao.UserDao">
+<mapper namespace="com.mapper.UserMapper">
     <select id="selectUserByPhoneNumber"  parameterType="String" resultType="com.model.entity.User">
         select *
         from guess.user where phoneNumber=#{phoneNumber};

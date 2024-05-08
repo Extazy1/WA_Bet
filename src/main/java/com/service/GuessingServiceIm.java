@@ -1,6 +1,6 @@
 package com.service;
 
-import com.dao.GuessingDao;
+import com.mapper.GuessingMapper;
 import com.model.entity.Guessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class GuessingServiceIm implements GuessingService{
     @Autowired
-    GuessingDao guessingDao;
+    GuessingMapper guessingDao;
     @Override
     public List<Guessing> selectGuessInfo() {
         return guessingDao.selectGuessInfo();

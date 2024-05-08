@@ -1,6 +1,6 @@
 package com.service;
 
-import com.dao.UserDao;
+import com.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.model.entity.User;
@@ -8,7 +8,7 @@ import com.model.entity.User;
 @Service
 public class UserServiceIm implements UserService {
     @Autowired
-    UserDao userDao;
+    UserMapper userDao;
     //添加新用户
     @Override
     public int insertUser(String phoneNumber,String password,String userName,String address,String IP) {
