@@ -3,9 +3,14 @@ package com.controller;
 import com.annotation.RequiresAuthority;
 import com.model.dto.RankingDTO;
 import com.model.dto.VoteDTO;
+import com.model.dto.VotesDTO;
 import com.model.entity.Athlete;
+import com.model.entity.User;
 import com.model.entity.Vote;
+import com.model.entity.VoteEvent;
 import com.service.AthleteService;
+import com.service.UserService;
+import com.service.VoteEventService;
 import com.service.VoteService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,9 +29,14 @@ public class VoteController {
 
     @Autowired
     private VoteService voteService;
+    @Autowired
+    private VoteEventService voteEventService;
 
     @Autowired
     private AthleteService athleteService;
+
+    @Autowired
+    private UserService userService;
 
     @ApiOperation(value = "添加或更新投票记录", notes = "新增或更新投票记录信息")
     @PostMapping("/add")
@@ -55,9 +65,35 @@ public class VoteController {
     @RequiresAuthority(value = 1) // 需要管理员权限
     @GetMapping("/all")
     public Map<String, Object> getAllVotes() {
+        // 获取所有投票记录
         List<Vote> votes = voteService.list();
-        List<VoteDTO> voteDTOs = votes.stream()
-                .map(vote -> new VoteDTO(vote.getId(), vote.getUserId(), vote.getAthleteId(), vote.getVoteEventId(), vote.getVotes()))
+
+        // 获取所有用户信息
+        List<User> users = userService.getAllUsers();
+        Map<Integer, User> userMap = users.stream()
+                .collect(Collectors.toMap(
+                        user -> (int) user.getId(), // Cast long to int
+                        user -> user
+                ));
+
+        // 获取所有运动员信息
+        List<Athlete> athletes = athleteService.list();
+        Map<Integer, Athlete> athleteMap = athletes.stream()
+                .collect(Collectors.toMap(Athlete::getId, athlete -> athlete));
+
+        // 获取所有投票活动信息
+        List<VoteEvent> voteEvents = voteEventService.list();
+        Map<Integer, VoteEvent> voteEventMap = voteEvents.stream()
+                .collect(Collectors.toMap(VoteEvent::getId, voteEvent -> voteEvent));
+
+        // 构造包含用户和运动员详细信息的投票记录
+        List<VotesDTO> voteDTOs = votes.stream()
+                .map(vote -> {
+                    User user = userMap.get(vote.getUserId());
+                    Athlete athlete = athleteMap.get(vote.getAthleteId());
+                    VoteEvent voteEvent = voteEventMap.get(vote.getVoteEventId());
+                    return new VotesDTO(vote.getId(), vote.getVotes(), user, athlete, voteEvent);
+                })
                 .collect(Collectors.toList());
 
         Map<String, Object> result = new HashMap<>();
@@ -66,6 +102,7 @@ public class VoteController {
         result.put("data", voteDTOs);
         return result;
     }
+
 
     @ApiOperation(value = "根据ID获取投票记录信息", notes = "通过ID获取特定投票记录信息")
     @GetMapping("/get/{id}")

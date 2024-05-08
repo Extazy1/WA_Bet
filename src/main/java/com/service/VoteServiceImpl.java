@@ -1,8 +1,10 @@
 package com.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.model.entity.Athlete;
 import com.model.entity.Vote;
+import com.model.entity.VoteEvent;
 import com.service.VoteService;
 import com.mapper.VoteMapper;
 import org.springframework.beans.factory.annotation.Autowired;

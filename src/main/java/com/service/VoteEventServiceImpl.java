@@ -1,10 +1,12 @@
 package com.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.model.entity.VoteEvent;
-import com.service.VoteEventService;
 import com.mapper.VoteEventMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author Admin
@@ -14,5 +16,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class VoteEventServiceImpl extends ServiceImpl<VoteEventMapper, VoteEvent>
         implements VoteEventService{
+    private VoteEventMapper voteEventMapper;
 
+    @Override
+    public List<VoteEvent> getAllVoteEvents() {
+        return voteEventMapper.selectList(new QueryWrapper<>());
+    }
 }
