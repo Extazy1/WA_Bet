@@ -188,21 +188,25 @@ public class VoteController {
         Map<Integer, Athlete> athleteMap = athletes.stream()
                 .collect(Collectors.toMap(Athlete::getId, athlete -> athlete));
 
-        // 对运动员得票数进行降序排序
-        List<Map.Entry<Integer, Integer>> sortedAthleteVotes = athleteVotesMap.entrySet()
-                .stream()
-                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
-                .collect(Collectors.toList());
-
         // 构造返回结果
         List<RankingDTO> rankings = new ArrayList<>();
-        for (int i = 0; i < sortedAthleteVotes.size(); i++) {
-            Map.Entry<Integer, Integer> entry = sortedAthleteVotes.get(i);
-            Athlete athlete = athleteMap.get(entry.getKey());
-            if (athlete != null) {
-                RankingDTO rankingDTO = new RankingDTO(i + 1, entry.getValue(), athlete.getId(), athlete.getName(), athlete.getSport(), athlete.getLink());
-                rankings.add(rankingDTO);
-            }
+        int rank = 1;
+
+        for (Map.Entry<Integer, Athlete> entry : athleteMap.entrySet()) {
+            Integer athleteId = entry.getKey();
+            Athlete athlete = entry.getValue();
+            int votesForAthlete = athleteVotesMap.getOrDefault(athleteId, 0);
+            RankingDTO rankingDTO = new RankingDTO(rank, votesForAthlete, athleteId, athlete.getName(), athlete.getSport(), athlete.getLink());
+            rankings.add(rankingDTO);
+            rank++;
+        }
+
+        // 按得票数降序排序
+        rankings.sort((r1, r2) -> Integer.compare(r2.getVotes(), r1.getVotes()));
+
+        // 更新排名
+        for (int i = 0; i < rankings.size(); i++) {
+            rankings.get(i).setRank(i + 1);
         }
 
         Map<String, Object> result = new HashMap<>();
