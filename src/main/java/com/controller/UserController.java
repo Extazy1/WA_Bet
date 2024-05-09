@@ -90,9 +90,14 @@ public class UserController {
                 result.put("msg", "用户未注册");
                 result.put("data", data);
                 break;
-            default:
+            case 2:
                 result.put("code", 1);
                 result.put("msg", "密码错误");
+                result.put("data", data);
+                break;
+            default:
+                result.put("code", 1);
+                result.put("msg", "用户被封禁，请联系管理员");
                 result.put("data", data);
                 break;
         }

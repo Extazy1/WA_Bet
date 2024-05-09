@@ -53,6 +53,9 @@ public class UserServiceIm implements UserService {
         else if(!user.getPassword().equals(password)){
             return 2; //密码错误
         }
+        else if ((!(user.getAuthority() != 0) || (user.getAuthority() != 1))){
+            return 3; // 用户被封禁
+        }
         else{
             return 0; //登录成功
         }
