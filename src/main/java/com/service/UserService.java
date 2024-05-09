@@ -10,5 +10,6 @@ public interface UserService {
     public int selectUserByUserName1(String username, String password);
     List<User> getAllUsers();
     boolean banUserById(Integer userId);
+    boolean freeUserById(Integer userId);
 }
 

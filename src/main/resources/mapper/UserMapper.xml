@@ -22,9 +22,4 @@
         insert into guess.user(phoneNumber,password,userName,address,IP)
         VALUES (#{phoneNumber},#{password},#{userName},#{address},#{IP});
     </insert>
-
-
-
-
-
 </mapper>

@@ -197,4 +197,23 @@ public class UserController {
 
         return result;
     }
+
+    @ApiOperation(value = "解除封禁用户", notes = "管理员解除封禁用户")
+    @RequiresAuthority(value = 1) // 需要管理员权限
+    @PostMapping("/free")
+    public Map<String, Object> freeUser(
+            @ApiParam(value = "用户ID", required = true) @RequestParam Integer userId) {
+        Map<String, Object> result = new HashMap<>();
+        boolean success = userService.freeUserById(userId);
+
+        if (success) {
+            result.put("code", 0);
+            result.put("msg", "用户已被解封");
+        } else {
+            result.put("code", 1);
+            result.put("msg", "未找到用户或解封失败");
+        }
+
+        return result;
+    }
 }

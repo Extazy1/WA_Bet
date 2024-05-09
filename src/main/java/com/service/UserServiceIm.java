@@ -53,13 +53,12 @@ public class UserServiceIm implements UserService {
         else if(!user.getPassword().equals(password)){
             return 2; //密码错误
         }
-        else if ((!(user.getAuthority() != 0) || (user.getAuthority() != 1))){
+        else if ((user.getAuthority() != 0) && (user.getAuthority() != 1)){
             return 3; // 用户被封禁
         }
         else{
             return 0; //登录成功
         }
-
     }
 
     // 获取所有用户信息
@@ -73,6 +72,17 @@ public class UserServiceIm implements UserService {
         User user = userDao.selectUserById(userId);
         if (user != null) {
             user.setAuthority(2); // 将用户权限设置为 2 表示封禁
+            userDao.updateUser(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean freeUserById(Integer userId) {
+        User user = userDao.selectUserById(userId);
+        if (user != null) {
+            user.setAuthority(0); // 将用户权限设置为 0 表示解封
             userDao.updateUser(user);
             return true;
         }
