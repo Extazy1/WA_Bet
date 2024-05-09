@@ -111,9 +111,11 @@ public class UserController {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        User user1 = (User) session.getAttribute("user");
+        Integer userId = (int)user1.getId();
 
-        if (user != null) {
+        if (userId != null) {
+            User user = userService.getUserById(userId);
             result.put("code", 0);
             result.put("msg", "获取用户信息成功");
             data.put("id", user.getId());
@@ -165,7 +167,6 @@ public class UserController {
         Map<String, Object> result = new HashMap<>();
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-
         if (user != null) {
             result.put("code", 0);
             result.put("msg", "用户已登录");
