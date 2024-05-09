@@ -88,4 +88,24 @@ public class UserServiceIm implements UserService {
         }
         return false;
     }
+
+    @Override
+    public User getUserById(Integer userId) {
+        User user = userDao.selectUserById(userId);
+        if (user != null) {
+            userDao.updateUser(user);
+            return user;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean updateUserById(User user) {
+        User existingUser = userDao.selectUserById((int)user.getId());
+        if (existingUser != null) {
+            userDao.updateUser(user);
+            return true;
+        }
+        return false;
+    }
 }

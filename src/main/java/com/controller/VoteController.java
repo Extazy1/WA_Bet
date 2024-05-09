@@ -45,8 +45,34 @@ public class VoteController {
             @ApiParam(value = "运动员ID", required = true) @RequestParam Integer athleteId,
             @ApiParam(value = "投票活动ID", required = true) @RequestParam Integer voteEventId,
             @ApiParam(value = "投票数量", required = true) @RequestParam Integer votes) {
+
+        Map<String, Object> result = new HashMap<>();
+
+        // 获取用户信息
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            result.put("code", 1);
+            result.put("msg", "用户不存在");
+            result.put("data", new HashMap<>());
+            return result;
+        }
+
+        // 检查用户是否有足够的票数
+        if (user.getPoint() < votes) {
+            result.put("code", 1);
+            result.put("msg", "用户票数不足");
+            result.put("data", new HashMap<>());
+            return result;
+        }
+
+        // 执行添加或更新投票记录的逻辑
         voteService.addOrUpdateVote(userId, athleteId, voteEventId, votes);
 
+        // 更新用户积分
+        user.setPoint(user.getPoint() - votes);
+        userService.updateUserById(user);
+
+        // 获取最新的投票记录
         Vote vote = voteService.getOne(new QueryWrapper<Vote>()
                 .eq("user_id", userId)
                 .eq("athlete_id", athleteId)
@@ -54,7 +80,6 @@ public class VoteController {
 
         VoteDTO voteDTO = new VoteDTO(vote.getId(), vote.getUserId(), vote.getAthleteId(), vote.getVoteEventId(), vote.getVotes());
 
-        Map<String, Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "添加或更新成功");
         result.put("data", voteDTO);
